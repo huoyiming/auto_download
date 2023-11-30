@@ -76,9 +76,8 @@ jobs:
 
       - name: Check Kernel Info
         run: |
-          cd output
-          ./magiskboot unpack boot.img >> $GITHUB_STEP_SUMMARY
-          ./magiskboot unpack init_boot.img >> $GITHUB_STEP_SUMMARY
+          ./magiskboot unpack output/boot.img >> $GITHUB_STEP_SUMMARY
+          ./magiskboot unpack output/init_boot.img >> $GITHUB_STEP_SUMMARY
 
       - name: Upload To Github Actions Artifacts
         uses: actions/upload-artifact@v2
