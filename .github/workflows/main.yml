@@ -65,7 +65,7 @@ jobs:
           a=json.loads(a)
           url=a['assets'][0]['browser_download_url']
           magisk=requests.get(url).content
-          with open('magisk.apk','rb') as f:
+          with open('magisk.apk','wb') as f:
               f.write(magisk)
               f.close
           mgfile=zipfile.ZipFile('magisk.apk','r')
