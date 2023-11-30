@@ -13,8 +13,9 @@ jobs:
     steps:
       - name: Download
         run: |
+          pip3 install requests
           wget ${{ github.event.inputs.Download_Link }}
-      - name: Unzip
+      - name: Unpack
         shell: python
         run: |
           import zipfile,os
@@ -31,6 +32,16 @@ jobs:
                   os.system('cd payload_dumper && pip3 install -r requirements.txt')
                   os.system('cd payload_dumper && python3 payload_dumper.py payload.bin')
                   os.system('mkdir output && cp payload_dumper/output/boot.img ./output/ && cp payload_dumper/output/init_boot.img ./output/')
+              else:
+                  pathlist=[]
+                  for i,j,k in os.walk('./'):
+                      for file in k:
+                          if file=='boot.img' or file=='init_boot.img':
+                              pathlist.append(os.path.join(i,file))
+                  os.system(f'mkdir output')
+                  for path in pathlist:
+                      os.system(f'cp {path} output/')
+                    
           else:
               for i,j,k in os.walk('./'):
                   for file in k:
@@ -45,6 +56,29 @@ jobs:
               os.system(f'mkdir output')
               for path in pathlist:
                   os.system(f'cp {path} output/')
+
+      - name: Get Magiskboot
+        shell: python
+        run: |
+          import requests,json,zipfile,os
+          a=requests.get('https://api.github.com/repos/topjohnwu/magisk/releases/latest').text
+          a=json.loads(a)
+          url=a['assets'][0]['browser_download_url']
+          magisk=requests.get(url).content
+          with open('magisk.apk','rb') as f:
+              f.write(magisk)
+              f.close
+          mgfile=zipfile.ZipFile('magisk.apk','r')
+          os.system(f'mv {mgfile.extract("lib/x86_64/libmagiskboot.so","./")} ./magiskboot && sudo chmod +x magiskboot')
+
+      - name: Get Magisk boot_patch.sh
+        run: git clone --recurse-submodules https://github.com/topjohnwu/Magisk.git
+
+      - name: Check Kernel Info
+        run: |
+          cd output
+          ./magiskboot unpack boot.img >> $GITHUB_STEP_SUMMARY
+          ./magiskboot unpack init_boot.img >> $GITHUB_STEP_SUMMARY
 
       - name: Upload To Github Actions Artifacts
         uses: actions/upload-artifact@v2
