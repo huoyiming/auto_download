@@ -72,14 +72,16 @@ jobs:
           os.system(f'mv {mgfile.extract("lib/x86_64/libmagiskboot.so","./")} ./magiskboot && sudo chmod +x magiskboot')
 
       - name: Check Kernel Info
-        shell: python
         run: |
-          import os
-          try:
-              os.system('./magiskboot unpack output/boot.img >> ${{ GITHUB_STEP_SUMMARY }}')
-              os.system('./magiskboot unpack output/init_boot.img >> ${{ GITHUB_STEP_SUMMARY }}')
-          except:
-              pass
+          for img_file in "output/"/*.img; do
+              if [ -f "$img_file" ]; then
+                  # 提取文件名
+                  file_name=$(basename "$img_file")
+                  # 执行unpack命令
+                  ./magiskboot unpack "$img_file"
+                  echo "Unpacked $file_name"
+              fi
+          done
 
       - name: Upload To Github Actions Artifacts
         uses: actions/upload-artifact@v2
