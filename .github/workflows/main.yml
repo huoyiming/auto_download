@@ -70,14 +70,6 @@ jobs:
               f.close
           mgfile=zipfile.ZipFile('magisk.apk','r')
           os.system(f'mv {mgfile.extract("lib/x86_64/libmagiskboot.so","./")} ./magiskboot && sudo chmod +x magiskboot')
-          os.system(f'mv {mgfile.extract("lib/x86_64/libmagiskinit.so","./")} ./magiskboot && sudo chmod +x magiskinit')
-          os.system(f'mv {mgfile.extract("lib/x86_64/libmagisk64.so","./")} ./magiskboot && sudo chmod +x magisk64')
-
-      - name: Get Magisk boot_patch.sh
-        run: |
-          git clone https://github.com/topjohnwu/Magisk.git
-          cp Magisk/scripts/boot_patch.sh ./
-          cp Magisk/scripts/util_functions.sh ./
 
       - name: Check Kernel Info
         shell: python
@@ -86,6 +78,8 @@ jobs:
           try:
               os.system('./magiskboot unpack output/boot.img >> $GITHUB_STEP_SUMMARY')
               os.system('./magiskboot unpack output/init_boot.img >> $GITHUB_STEP_SUMMARY')
+          except:
+              pass
 
       - name: Upload To Github Actions Artifacts
         uses: actions/upload-artifact@v2
