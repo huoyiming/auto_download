@@ -78,7 +78,7 @@ jobs:
                   # 提取文件名
                   file_name=$(basename "$img_file")
                   # 执行unpack命令
-                  ./magiskboot unpack "$img_file"
+                  ./magiskboot unpack "$img_file" >> $GITHUB_STEP_SUMMARY
                   echo "Unpacked $file_name"
               fi
           done
