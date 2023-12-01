@@ -76,8 +76,8 @@ jobs:
         run: |
           import os
           try:
-              os.system('./magiskboot unpack output/boot.img >> $GITHUB_STEP_SUMMARY')
-              os.system('./magiskboot unpack output/init_boot.img >> $GITHUB_STEP_SUMMARY')
+              os.system('./magiskboot unpack output/boot.img >> ${{ GITHUB_STEP_SUMMARY }}')
+              os.system('./magiskboot unpack output/init_boot.img >> ${{ GITHUB_STEP_SUMMARY }}')
           except:
               pass
 
